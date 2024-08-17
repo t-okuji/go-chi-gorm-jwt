@@ -21,3 +21,19 @@ services:
       - "8081:8080"
     depends_on:
       - go
+  db:
+    container_name: mariadb
+    image: mariadb:lts-ubi
+    ports:
+      - '3306:3306'
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      TZ: Asia/Tokyo
+    volumes:
+      - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - db-volume:/var/lib/mysql
+volumes:
+  db-volume:
