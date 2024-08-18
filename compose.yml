@@ -10,6 +10,9 @@ services:
     ports:
       - 8080:3000
     command: sh -c 'go mod tidy && swag init && air'
+    depends_on:
+      db:
+        condition: service_healthy
   swagger-ui:
     container_name: swagger-ui
     image: swaggerapi/swagger-ui
@@ -22,18 +25,23 @@ services:
     depends_on:
       - go
   db:
-    container_name: mariadb
-    image: mariadb:lts-ubi
+    container_name: mysql
+    image: mysql:8.4.2
     ports:
       - '3306:3306'
     environment:
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       TZ: Asia/Tokyo
     volumes:
-      - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       - db-volume:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
 volumes:
   db-volume:
