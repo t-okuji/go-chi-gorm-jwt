@@ -1,6 +1,6 @@
 module github.com/t-okuji/go-chi-gorm-jwt
 
-go 1.22.6
+go 1.23.0
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
